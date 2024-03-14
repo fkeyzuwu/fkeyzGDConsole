@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="DebugSettings" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://debug/debug_settings.gd" id="1_bukab"]
+
+[resource]
+script = ExtResource("1_bukab")
+commands = Array[String](["add Player.velocity", "add PlayerStateMachine.state"])

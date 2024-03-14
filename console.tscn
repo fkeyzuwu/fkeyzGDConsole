@@ -1,0 +1,88 @@
+[gd_scene load_steps=8 format=3 uid="uid://d2vl0thpmetoq"]
+
+[ext_resource type="Script" path="res://debug/console.gd" id="1_07t4k"]
+[ext_resource type="Script" path="res://debug/console_auto_scroll.gd" id="2_2r638"]
+[ext_resource type="PackedScene" uid="uid://cilt6a2sbv1fn" path="res://debug/debug_info.tscn" id="3_q2xs2"]
+[ext_resource type="Script" path="res://debug/logger.gd" id="3_xnoqm"]
+[ext_resource type="Script" path="res://debug/command_runner.gd" id="4_ewyfw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_drqq6"]
+bg_color = Color(0.180392, 0.180392, 0.180392, 0.894118)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_725s3"]
+bg_color = Color(0.121569, 0.121569, 0.121569, 0.580392)
+border_width_bottom = 3
+border_color = Color(0.0862745, 0.0862745, 0.0862745, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Console" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_07t4k")
+
+[node name="DebugInfo" parent="." instance=ExtResource("3_q2xs2")]
+layout_mode = 1
+
+[node name="ConsoleView" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 290.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_drqq6")
+
+[node name="MarginContainer" type="MarginContainer" parent="ConsoleView"]
+custom_minimum_size = Vector2(0, 290)
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContaier" type="VBoxContainer" parent="ConsoleView/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="PanelContainer" type="PanelContainer" parent="ConsoleView/MarginContainer/VBoxContaier"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_725s3")
+
+[node name="MarginContainer" type="MarginContainer" parent="ConsoleView/MarginContainer/VBoxContaier/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ConsoleView/MarginContainer/VBoxContaier/PanelContainer/MarginContainer"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+follow_focus = true
+script = ExtResource("2_2r638")
+
+[node name="Logger" type="Label" parent="ConsoleView/MarginContainer/VBoxContaier/PanelContainer/MarginContainer/ScrollContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("3_xnoqm")
+
+[node name="CommandRunner" type="LineEdit" parent="ConsoleView/MarginContainer/VBoxContaier"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "type here... bitch"
+script = ExtResource("4_ewyfw")
+
+[connection signal="log_updated" from="ConsoleView/MarginContainer/VBoxContaier/PanelContainer/MarginContainer/ScrollContainer/Logger" to="ConsoleView/MarginContainer/VBoxContaier/PanelContainer/MarginContainer/ScrollContainer" method="_on_logger_log_updated"]
+[connection signal="entered_command" from="ConsoleView/MarginContainer/VBoxContaier/CommandRunner" to="." method="parse_command"]
+[connection signal="text_changed" from="ConsoleView/MarginContainer/VBoxContaier/CommandRunner" to="." method="_on_command_runner_text_changed"]
+[connection signal="text_submitted" from="ConsoleView/MarginContainer/VBoxContaier/CommandRunner" to="ConsoleView/MarginContainer/VBoxContaier/CommandRunner" method="_on_text_submitted"]
